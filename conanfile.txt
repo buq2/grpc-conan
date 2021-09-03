@@ -1,0 +1,9 @@
+[requires]
+    protobuf/3.17.1
+    catch2/2.13.7
+    grpc/1.39.1
+    #zlib/1.2.8
+
+[generators]
+    cmake
+    cmake_find_package
