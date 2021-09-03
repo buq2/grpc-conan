@@ -30,6 +30,11 @@ message(STATUS "Using gRPC ${gRPC_VERSION}")
 set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
 
 
+get_filename_component(GRPC_PLUGIN_DIRECTORY ${GRPC_CPP_PLUGIN_PROGRAM} DIRECTORY)
+find_program(GRPC_PYTHON_PLUGIN_PROGRAM 
+  NAMES grpc_python_plugin 
+  PATHS ${GRPC_PLUGIN_DIRECTORY}
+  NO_DEFAULT_PATH)
 
 add_subdirectory(src)
 

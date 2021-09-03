@@ -13,7 +13,8 @@ add_custom_command(
         --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
         --python_out "${CMAKE_CURRENT_BINARY_DIR}"
         -I "${hw_proto_path}"
-        --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+        --plugin=protoc-gen-grpc="${GRPC_CPP_PLUGIN_PROGRAM}"
+        --plugin=protoc-gen-grpc="${GRPC_PYTHON_PLUGIN_PROGRAM}"
         "${hw_proto}"
       DEPENDS "${hw_proto}")
 add_library(hw_proto_obj OBJECT ${hw_proto_srcs} ${hw_grpc_srcs})
