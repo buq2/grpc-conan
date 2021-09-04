@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 
-pth = os.path.join(os.path.dirname(__file__), '..', 'build','src')
+pth = os.path.join(os.path.dirname(__file__), '..', 'build','gens')
 sys.path.append(pth)
 
 import grpc
