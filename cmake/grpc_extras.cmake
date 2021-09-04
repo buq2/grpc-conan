@@ -14,7 +14,7 @@ find_program(GRPC_PYTHON_PLUGIN_PROGRAM
 set(_gRPC_PROTO_GENS_DIR ${CMAKE_BINARY_DIR}/gens)
 file(MAKE_DIRECTORY ${_gRPC_PROTO_GENS_DIR})
 
-# protobuf_generate_grpc_cpp is taken from grpc repos CMakeLists.txt
+# protobuf_generate_grpc_cpp is adapted from grpc repos CMakeLists.txt
   #  protobuf_generate_grpc_cpp
 #  --------------------------
 #
@@ -26,14 +26,20 @@ file(MAKE_DIRECTORY ${_gRPC_PROTO_GENS_DIR})
 #   ``ARGN``
 #     ``.proto`` files
 #
-function(protobuf_generate_grpc_cpp)
+function(protobuf_generate_grpc_cpp SRCS HDRS)
 if(NOT ARGN)
   message(SEND_ERROR "Error: PROTOBUF_GENERATE_GRPC_CPP() called without any proto files")
   return()
 endif()
 
-set(_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR "${protobuf_INCLUDE_DIR}/src")
+# Clear outputs
+set(${SRCS})
+set(${HDRS})
+
+# Include directories from protobuf lib and current dir
+set(_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR "${protobuf_INCLUDE_DIR}")
 set(_protobuf_include_path -I . -I ${_gRPC_PROTOBUF_WELLKNOWN_INCLUDE_DIR})
+
 foreach(FIL ${ARGN})
   get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
   get_filename_component(FIL_WE ${FIL} NAME_WE)
@@ -48,12 +54,18 @@ foreach(FIL ${ARGN})
     set(_gRPC_CPP_PLUGIN ${GRPC_CPP_PLUGIN_PROGRAM})
   endif()
 
+  SET(_GRPC_HEADERS 
+    "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.h" 
+    "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}_mock.grpc.pb.h" 
+    "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.h")
+  SET(_GRPC_SRCS
+    "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.cc"
+    "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.cc")
+  list(APPEND ${SRCS} ${_GRPC_SRCS})
+  list(APPEND ${HDRS} ${_GRPC_HEADERS})
+
   add_custom_command(
-    OUTPUT "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.cc"
-           "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.grpc.pb.h"
-           "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}_mock.grpc.pb.h"
-           "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.cc"
-           "${_gRPC_PROTO_GENS_DIR}/${RELFIL_WE}.pb.h"
+    OUTPUT ${_GRPC_SRCS} ${_GRPC_HEADERS} 
     COMMAND ${Protobuf_PROTOC_EXECUTABLE}
     ARGS --grpc_out=generate_mock_code=true:${_gRPC_PROTO_GENS_DIR}
          --cpp_out=${_gRPC_PROTO_GENS_DIR}
@@ -65,4 +77,9 @@ foreach(FIL ${ARGN})
     COMMENT "Running gRPC C++ protocol buffer compiler on ${FIL}"
     VERBATIM)
 endforeach()
+
+# Set outputs
+set(${SRCS} ${${SRCS}} PARENT_SCOPE)
+set(${HDRS} ${${HDRS}} PARENT_SCOPE)
+
 endfunction()
