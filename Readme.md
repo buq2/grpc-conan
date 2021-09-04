@@ -1,3 +1,4 @@
+Example project how to use gRPC, Conan and CMake
 
 # C++ side
 ```
