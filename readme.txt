@@ -13,3 +13,10 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python src/client.py
 ```
+
+# Docker
+
+```
+docker build -t grpctest .
+docker run --rm -it -p 50051:50051 grpctest build/bin/main
+```
