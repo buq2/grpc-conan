@@ -3,5 +3,4 @@
     grpc/1.39.1
 
 [generators]
-    cmake
     cmake_find_package

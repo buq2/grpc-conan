@@ -13,6 +13,5 @@ else()
                     BASIC_SETUP
                     BUILD missing
                     CONFIGURATION_TYPES "Release")
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_BINARY_DIR}")
-    include(conanbuildinfo)
+    set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}" ${CMAKE_MODULE_PATH})
 endif()
